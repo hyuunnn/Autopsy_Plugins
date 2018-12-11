@@ -90,7 +90,6 @@ class HWPIngestModule(DataSourceIngestModule):
     def __init__(self, settings):
         self.context = None
         self.local_settings = settings
-        self.eps_check = 0
         self.SUMMARY_INFORMATION_PROPERTIES = [
             dict(id=0x02, name='PIDSI_TITLE', title='Title'),
             dict(id=0x03, name='PIDSI_SUBJECT', title='Subject'),
@@ -239,11 +238,11 @@ class HWPIngestModule(DataSourceIngestModule):
             
             HwpSummaryInfo_data = hwp.extract_HwpSummaryInfo()
             FileHeader_data = hwp.extract_FileHeader()
+            eps_check = 0
 
             if self.local_settings.checkbox_getFlag():
                 eps_data = hwp.extract_eps()
                 if eps_data != []:
-                    self.eps_check = 1
                     filepath = os.path.join(EPSDirectory, os.path.splitext(unicode(file.getName()))[0])
                     try:
                         os.mkdir(filepath)
@@ -254,8 +253,9 @@ class HWPIngestModule(DataSourceIngestModule):
                         f = open(os.path.join(filepath, name), "wb")
                         f.write(data)
                         f.close()
-                else:
-                    self.eps_check = 0
+                        eps_check += 1
+            else:
+                eps_check = "Checkbox is not checked."
 
             art = file.newArtifact(artHwpId)
             art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_FILENAME"), 
