@@ -134,6 +134,12 @@ class HWPIngestModule(DataSourceIngestModule):
             except:
                 pass
 
+        HWPDirectory = os.path.join(Case.getCurrentCase().getTempDirectory(),"HWP Files")
+        try:
+            os.mkdir(HWPDirectory)
+        except:
+            pass
+
         for file in files:
             if self.context.isJobCancelled():
                 return IngestModule.ProcessResult.OK
@@ -141,7 +147,7 @@ class HWPIngestModule(DataSourceIngestModule):
             self.log(Level.INFO, "Processing file: " + file.getName())
             fileCount += 1
 
-            HWPPath = os.path.join(Case.getCurrentCase().getTempDirectory(), unicode(file.getName()))
+            HWPPath = os.path.join(HWPDirectory, unicode(file.getName()))
             ContentUtils.writeToFile(file, File(HWPPath))
 
             sample = open(HWPPath,"rb")
