@@ -45,55 +45,61 @@ class hwp_parser():
         property_data = []
         return_data = []
 
-        start_offset = 0x2c
-        data_size_offset = u32(data[start_offset:start_offset+4])
-        data_size = u32(data[data_size_offset:data_size_offset+4])
-        property_count = u32(data[data_size_offset+4:data_size_offset+8])
+        try:
+            start_offset = 0x2c
+            data_size_offset = u32(data[start_offset:start_offset+4])
+            data_size = u32(data[data_size_offset:data_size_offset+4])
+            property_count = u32(data[data_size_offset+4:data_size_offset+8])
 
-        start_offset = data_size_offset + 8
-        
-        for i in range(property_count):
-            property_ID = u32(data[start_offset:start_offset+4])
-            unknown_data = u32(data[start_offset+4:start_offset+8])
-            property_data.append({"property_ID":property_ID, "unknown_data":unknown_data})
-            start_offset = start_offset + 8
+            start_offset = data_size_offset + 8
+            
+            for i in range(property_count):
+                property_ID = u32(data[start_offset:start_offset+4])
+                unknown_data = u32(data[start_offset+4:start_offset+8])
+                property_data.append({"property_ID":property_ID, "unknown_data":unknown_data})
+                start_offset = start_offset + 8
 
-        data = data[start_offset:]
-        
-        start_offset = 0x0
-        for i in range(property_count):
-            if data[start_offset:start_offset+4] == b"\x1f\x00\x00\x00":
-                size = u32(data[start_offset+4:start_offset+8]) * 2
-                result = data[start_offset+8:start_offset+8+size]
-                info_data.append(result.decode("utf-16-le"))
+            data = data[start_offset:]
+            
+            start_offset = 0x0
+            for i in range(property_count):
+                if data[start_offset:start_offset+4] == b"\x1f\x00\x00\x00":
+                    size = u32(data[start_offset+4:start_offset+8]) * 2
+                    result = data[start_offset+8:start_offset+8+size]
+                    info_data.append(result.decode("utf-16-le"))
 
-                start_offset = start_offset + 8 + size
-                if data[start_offset:start_offset+2] == b"\x00\x00":
-                    start_offset += 2
+                    start_offset = start_offset + 8 + size
+                    if data[start_offset:start_offset+2] == b"\x00\x00":
+                        start_offset += 2
 
-            elif data[start_offset:start_offset+4] == b"\x40\x00\x00\x00":
-                date = u64(data[start_offset+4:start_offset+12])
-                start_offset = start_offset + 12
-                info_data.append(str(date))
+                elif data[start_offset:start_offset+4] == b"\x40\x00\x00\x00":
+                    date = u64(data[start_offset+4:start_offset+12])
+                    start_offset = start_offset + 12
+                    info_data.append(str(date))
 
-        for i in range(len(info_data)):
-            for information in self.SUMMARY_INFORMATION_PROPERTIES:
-                if information['id'] == property_data[i]['property_ID']:
-                    return_data.append({"property_ID":property_data[i]['property_ID'], 
-                                        "title":information['title'], 
-                                        "name":information['name'], 
-                                        "data":info_data[i],
-                                        "unknown_data":property_data[i]['unknown_data']})
-                    continue
+            for i in range(len(info_data)):
+                for information in self.SUMMARY_INFORMATION_PROPERTIES:
+                    if information['id'] == property_data[i]['property_ID']:
+                        return_data.append({"property_ID":property_data[i]['property_ID'], 
+                                            "title":information['title'], 
+                                            "name":information['name'], 
+                                            "data":info_data[i],
+                                            "unknown_data":property_data[i]['unknown_data']})
+                        continue
 
-        return return_data
+            return return_data
+        except:
+            return None
 
     def FileHeader_parse(self, data):
         ## https://storage.googleapis.com/google-code-archive-downloads/v2/code.google.com/010-hwp-parser/HWPFileHeader.bt 참고
-        signature = data[:32]
-        version = u32(data[32:36])
-        flags = u32(data[36:40])
-        return {"signature":signature, "version":version, "flags":flags}
+        try:
+            signature = data[:32]
+            version = u32(data[32:36])
+            flags = u32(data[36:40])
+            return {"signature":signature, "version":version, "flags":flags}
+        except:
+            return None
     
     def extract_data(self, name):
         stream = self.ole.openstream(name)
