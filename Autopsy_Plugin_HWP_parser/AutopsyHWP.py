@@ -267,7 +267,7 @@ class HWPIngestModule(DataSourceIngestModule):
             art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_SHA256"), 
                         HWPIngestModuleFactory.moduleName, sha256))
             art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_EPS_CHECK"), 
-                        HWPIngestModuleFactory.moduleName, str(self.eps_check)))
+                        HWPIngestModuleFactory.moduleName, str(eps_check)))
 
             if HwpSummaryInfo_data != None:
                 for Hwpinfo in HwpSummaryInfo_data:
