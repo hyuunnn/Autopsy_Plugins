@@ -150,7 +150,7 @@ class HWPIngestModule(DataSourceIngestModule):
             md5 = hashlib.md5(sample_data).hexdigest()
             sha1 = hashlib.sha1(sample_data).hexdigest()
             sha256 = hashlib.sha256(sample_data).hexdigest()
-            artActCacheId = skCase.getArtifactTypeID("TSK_HWP_DATA")
+            artHwpId = skCase.getArtifactTypeID("TSK_HWP_DATA")
 
             try:
                 hwp = hwp_parser(HWPPath)
@@ -158,7 +158,7 @@ class HWPIngestModule(DataSourceIngestModule):
                 FileHeader_data = hwp.extract_FileHeader()
                 #eps_data = hwp.extract_eps()
 
-                art = file.newArtifact(artActCacheId)
+                art = file.newArtifact(artHwpId)
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_FILENAME"), 
                             HWPIngestModuleFactory.moduleName, unicode(file.getName())))
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_MD5"), 
@@ -180,7 +180,7 @@ class HWPIngestModule(DataSourceIngestModule):
                                 HWPIngestModuleFactory.moduleName, str(FileHeader_data['flags'])))
                 
             except IOError: # HWP File Error
-                art = file.newArtifact(artActCacheId)
+                art = file.newArtifact(artHwpId)
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_FILENAME"), 
                             HWPIngestModuleFactory.moduleName, unicode(file.getName())))
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_HWP_MD5"), 
