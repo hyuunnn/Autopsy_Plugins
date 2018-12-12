@@ -4,4 +4,8 @@
 
 <img src="images/2__.png" width="100%">
 
-TODO : ~~GUI Option (extract EPS option [CheckBox])~~
+### Autopsy Plugin (YARA)
+
+<img src="images/3_.png" width="100%">
+
+<img src="images/4_.png" width="100%">
