@@ -104,10 +104,11 @@ class YARAIngestModule(DataSourceIngestModule):
         numFiles = len(files)
         progressBar.switchToDeterminate(numFiles)
         fileCount = 0
+        detectCount = 0
 
         if numFiles > 0:
             try:
-                attID = skCase.addArtifactAttributeType("TSK_YARA_FILENAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "filename")
+                attID = skCase.addArtifactAttributeType("TSK_YARA_FILENAME", BlackboardAttribute.TSK_BLACKBOARD_ATTRIBUTE_VALUE_TYPE.STRING, "Filename")
             except:
                 pass
 
@@ -171,6 +172,7 @@ class YARAIngestModule(DataSourceIngestModule):
                             YARAIngestModuleFactory.moduleName, rulename))
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_YARA_FILEPATH"), 
                             YARAIngestModuleFactory.moduleName, filepath))
+                detectCount +=1
             else:
                 art = file.newArtifact(artYARAId)
                 art.addAttribute(BlackboardAttribute(skCase.getAttributeType("TSK_YARA_FILENAME"), 
@@ -183,7 +185,7 @@ class YARAIngestModule(DataSourceIngestModule):
             progressBar.progress(fileCount)
 
         message = IngestMessage.createMessage(IngestMessage.MessageType.DATA,
-            "Yara", "Found %d files" % fileCount)
+            "Yara", "Found %d files" % detectCount)
         IngestServices.getInstance().postMessage(message)
 
         return IngestModule.ProcessResult.OK
