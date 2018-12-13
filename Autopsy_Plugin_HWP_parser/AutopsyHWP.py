@@ -172,7 +172,7 @@ class HWPIngestModule(DataSourceIngestModule):
                 pass
 
             try:
-                artID_art = skCase.addArtifactType("TSK_HWP_DATA", "HWP Analysis")
+                artID_art = skCase.addBlackboardArtifactType("TSK_HWP_DATA", "HWP Analysis")
             except:
                 pass
 
